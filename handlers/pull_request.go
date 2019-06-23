@@ -62,7 +62,7 @@ func (h *PullRequestHandler) opened(ctx context.Context, event github.PullReques
 		return nil
 	}
 
-	comment := github.PullRequestComment{
+	comment := github.IssueComment{
 		Body: String(fmt.Sprintf(`## Step 5: Link a Pull Request to an Issue
 
 Awesome work creating that PR.  
@@ -79,7 +79,7 @@ Now let's link it to our issue so that when the PR is merged, GitHub will automa
 <hr>
 <h3 align="center">I'll respond when I detect this pull request's body has been edited.</h3>`, issueNumber)),
 	}
-	if _, _, err := client.PullRequests.CreateComment(ctx, repoOwner, repoName, event.GetPullRequest().GetNumber(), &comment); err != nil {
+	if _, _, err := client.Issues.CreateComment(ctx, repoOwner, repoName, event.GetPullRequest().GetNumber(), &comment); err != nil {
 		logrus.WithError(err).Error("Failed to create pr comment")
 	}
 
