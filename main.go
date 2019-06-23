@@ -44,6 +44,7 @@ func main() {
 		&handlers.IssuesHandler{ClientCreator: cc},
 		&handlers.CreateHandler{ClientCreator: cc},
 		&handlers.PushHandler{ClientCreator: cc},
+		&handlers.PullRequestHandler{ClientCreator: cc},
 	)
 
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
