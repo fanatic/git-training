@@ -1,1 +1,1 @@
-web: go run main.go handler.go
+web: bin/git-training
