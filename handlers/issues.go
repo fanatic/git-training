@@ -107,9 +107,17 @@ func (h *IssuesHandler) assigned(ctx context.Context, event github.IssuesEvent) 
 	repoOwner := repo.GetOwner().GetLogin()
 	repoName := repo.GetName()
 	author := event.GetIssue().GetUser()
-	assignee := event.GetIssue().GetAssignee()
+	assignees := event.GetIssue().Assignees
 
-	if author.GetLogin() != assignee.GetLogin() {
+	isAssigned := false
+	for _, assignee := range assignees {
+		if assignee.GetLogin() == author.GetLogin() {
+			isAssigned = true
+		}
+	}
+
+	if !isAssigned {
+		logrus.Infof("Dropping assigned event because user %s != assignees %v", author, assignees)
 		return nil
 	}
 
@@ -133,6 +141,8 @@ People use different workflows to contribute to software projects, but the simpl
 		Body: String(fmt.Sprintf(`## Step 2: Create a branch
 
 Let’s complete the first step of the GitHub flow: creating a branch <sup>[:book:](https://help.github.com/articles/github-glossary/#branch)</sup>.
+
+Day to day, it's more likely that you'll be creating your branch on the command line, but to keep training simple, let's create it in the web UI.
 
 ### :keyboard: Activity: Your first branch
 
