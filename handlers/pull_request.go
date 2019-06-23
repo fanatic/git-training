@@ -32,10 +32,12 @@ func (h *PullRequestHandler) Handle(ctx context.Context, eventType, deliveryID s
 		if err := h.opened(ctx, event); err != nil {
 			return errors.Wrap(err, "failed to parse pr")
 		}
+		break
 	case "edited":
 		if err := h.edited(ctx, event); err != nil {
 			return errors.Wrap(err, "failed to parse pr")
 		}
+		break
 	}
 
 	return nil

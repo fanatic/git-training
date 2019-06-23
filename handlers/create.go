@@ -32,6 +32,7 @@ func (h *CreateHandler) Handle(ctx context.Context, eventType, deliveryID string
 		if err := h.branchCreated(ctx, event); err != nil {
 			return errors.Wrap(err, "failed to parse create")
 		}
+		break
 	default:
 		logrus.Infof("Handling %s", event.GetRefType())
 	}
