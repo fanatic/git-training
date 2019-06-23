@@ -46,7 +46,7 @@ func (h *PullRequestHandler) opened(ctx context.Context, event github.PullReques
 	}
 
 	repo := event.GetRepo()
-	repoOwner := repo.GetOwner().GetName()
+	repoOwner := repo.GetOwner().GetLogin()
 	repoName := repo.GetName()
 	author := event.GetSender()
 
