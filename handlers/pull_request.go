@@ -231,20 +231,19 @@ func (h *PullRequestHandler) merged(ctx context.Context, event github.PullReques
 
 	comment := github.IssueComment{
 		Body: String(fmt.Sprintf(`## Nice work
-		
-		Congratulations @%s, you've completed this course!
-		
-		## What did you learn?
-		
-		Here's a recap of all the tasks you've accomplished in your repository:
-		
-		- You learned about issues, pull requests, and the structure of a GitHub repository
-		- You learned about branching
-		- You created a commit
-		- You viewed and responded to pull request reviews
-		- You edited an existing file
-		- You made your first contribution! :tada:  
-		`, author.GetLogin())),
+
+Congratulations @%s, you've completed this course!
+
+## What did you learn?
+
+Here's a recap of all the tasks you've accomplished in your repository:
+
+- You learned about issues, pull requests, and the structure of a GitHub repository
+- You learned about branching
+- You created a commit
+- You viewed and responded to pull request reviews
+- You edited an existing file
+- You made your first contribution! :tada:`, author.GetLogin())),
 	}
 	if _, _, err := client.Issues.CreateComment(ctx, repoOwner, repoName, event.GetPullRequest().GetNumber(), &comment); err != nil {
 		logrus.WithError(err).Error("Failed to create pr comment")
