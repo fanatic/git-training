@@ -148,12 +148,12 @@ Day to day, it's more likely that you'll be creating your branch on the command 
 
 1. Navigate to the [Code tab](https://github.factset.com/%s/%s)
 2. Click **Branch: master** in the drop-down
-3. In the field, enter a name for your branch, like "feat/username-1"
+3. In the field, enter a name for your branch, like "feat/%s-1"
 4. Click **Create branch: <name>** or press the “Enter” key to create your branch
 
 
 <hr>
-<h3 align="center">I'll respond when I detect a new branch has been created in this repository.</h3>`, repoOwner, repoName)),
+<h3 align="center">I'll respond when I detect a new branch has been created in this repository.</h3>`, repoOwner, repoName, author.GetLogin())),
 	}
 	if _, _, err := client.Issues.CreateComment(ctx, repoOwner, repoName, issueNumber, &comment); err != nil {
 		logrus.WithError(err).Error("Failed to create issue comment 2")
