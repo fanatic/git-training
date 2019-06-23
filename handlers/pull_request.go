@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 
@@ -35,6 +36,11 @@ func (h *PullRequestHandler) Handle(ctx context.Context, eventType, deliveryID s
 		break
 	case "edited":
 		if err := h.edited(ctx, event); err != nil {
+			return errors.Wrap(err, "failed to parse pr")
+		}
+		break
+	case "synchronize":
+		if err := h.synchronize(ctx, event); err != nil {
 			return errors.Wrap(err, "failed to parse pr")
 		}
 		break
@@ -106,9 +112,11 @@ func (h *PullRequestHandler) edited(ctx context.Context, event github.PullReques
 		return nil
 	}
 
-	// TODO confirm issue linked
-
-	// TODO create this comment as a review instead of a comment
+	// confirm issue linked
+	if !strings.Contains(event.GetPullRequest().GetBody(), fmt.Sprintf("Resolves #%d", issueNumber)) {
+		logrus.Infof("Dropping pr edited event because it doesn't contain issue link")
+		return nil
+	}
 
 	review := github.PullRequestReviewRequest{
 		Event: String("REQUEST_CHANGES"),
@@ -144,4 +152,55 @@ Let’s add some content to your file. Replace the contents of your file with a 
 
 func Int(i int) *int {
 	return &i
+}
+
+func (h *PullRequestHandler) synchronize(ctx context.Context, event github.PullRequestEvent) error {
+	installationID := githubapp.GetInstallationIDFromEvent(&event)
+	client, err := h.NewInstallationClient(installationID)
+	if err != nil {
+		return err
+	}
+
+	repo := event.GetRepo()
+	repoOwner := repo.GetOwner().GetLogin()
+	repoName := repo.GetName()
+	author := event.GetSender()
+	prNumber := event.GetPullRequest().GetNumber()
+
+	issueNumber, err := FindIssueNumberByAssignee(ctx, client, repoOwner, repoName, author.GetLogin())
+	if err != nil {
+		return err
+	} else if issueNumber == 0 {
+		return nil
+	}
+
+	// confirm multiple commits
+	if event.GetPullRequest().GetCommits() <= 1 {
+		logrus.Infof("Dropping pr sync event because it doesn't contain multiple commits")
+		return nil
+	}
+
+	review := github.PullRequestReviewRequest{
+		Event: String("APPROVE"),
+		Body: String(fmt.Sprintf(`## Step 7: Merge your pull request
+
+Nicely done @%s! :sparkles:
+
+You successfully created a pull request, and it has passed all of the tests.
+
+### :keyboard: Activity: Merge the pull request
+
+1. Click **Merge pull request**
+1. Click **Confirm merge**
+
+1. Once your branch has been merged, you don't need it anymore. Click **Delete branch**.
+
+<hr>
+<h3 align="center">I'll respond when this pull request is merged.</h3>`, author)),
+	}
+	if _, _, err := client.PullRequests.CreateReview(ctx, repoOwner, repoName, prNumber, &review); err != nil {
+		logrus.WithError(err).Error("Failed to create pr review")
+	}
+
+	return nil
 }

@@ -32,6 +32,10 @@ func (h *PushHandler) Handle(ctx context.Context, eventType, deliveryID string, 
 		logrus.Infof("Dropping push event because it was a create or delete")
 		return nil
 	}
+	if event.GetRef() == "master" {
+		logrus.Infof("Dropping push event because it was for master")
+		return nil
+	}
 	if err := h.commitCreated(ctx, event); err != nil {
 		return errors.Wrap(err, "failed to parse push")
 	}
