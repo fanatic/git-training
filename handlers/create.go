@@ -66,7 +66,7 @@ func (h *CreateHandler) branchCreated(ctx context.Context, event github.CreateEv
 	issueNumber := issues[0].GetNumber()
 
 	comment := github.IssueComment{
-		Body: String(fmt.Sprintf(`## Step 5: Commit a file
+		Body: String(fmt.Sprintf(`## Step 3: Commit a file
 
 :tada: You created a branch!
 
@@ -82,9 +82,9 @@ Commits are snapshots of file changes, so let's make our first one.
 			- Click **Create new file**
 			- In the "file name" field, type "users/%s.md". Entering the "/" in the filename will automatically place your file in the "users" directory.
 1. When you’re done naming the file, add the following content to your file:
-			`+"```yaml\n"+
-			"Hello, world!\n"+
-			"```"+`
+      `+"```yaml\n"+
+			"      Hello, world!\n"+
+			"      ```"+`
 1. After adding the text, you can commit the change by entering a commit message in the text-entry field below the file edit view.
 1. When you’ve entered a commit message, click **Commit new file**
 

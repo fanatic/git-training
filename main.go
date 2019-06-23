@@ -43,6 +43,7 @@ func main() {
 		cfg.Github,
 		&handlers.IssuesHandler{ClientCreator: cc},
 		&handlers.CreateHandler{ClientCreator: cc},
+		&handlers.PushHandler{ClientCreator: cc},
 	)
 
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
