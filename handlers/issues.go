@@ -52,40 +52,36 @@ func (h *IssuesHandler) opened(ctx context.Context, event github.IssuesEvent) er
 	repoName := repo.GetName()
 	author := event.GetIssue().GetUser()
 	comment := github.IssueComment{
-		Body: String(fmt.Sprintf(`
-		# :wave: Welcome to GitHub Training, @%s!
+		Body: String(fmt.Sprintf(`# :wave: Welcome to GitHub Training, @%s!
 
-		To get started, I’ll guide you through some important first steps in coding and collaborating on GitHub.
-		
-		### Using issues
-		
-		This is an issue <sup>[:book:](https://help.github.com/articles/github-glossary/#issue)</sup>: a place to record bugs, request enhancements, or answer questions about your repo.
-		
-		Issue titles are like email subject lines. They tell your collaborators what the issue is about at a glance. 
-		
-		<hr>
-		<h3 align="center">Keep reading below to find your first task</h3>		
-		`, author.GetLogin())),
+To get started, I’ll guide you through some important first steps in coding and collaborating on GitHub.
+
+### Using issues
+
+This is an issue <sup>[:book:](https://help.github.com/articles/github-glossary/#issue)</sup>: a place to record bugs, request enhancements, or answer questions about your repo.
+
+Issue titles are like email subject lines. They tell your collaborators what the issue is about at a glance. 
+
+<hr>
+<h3 align="center">Keep reading below to find your first task</h3>`, author.GetLogin())),
 	}
 	if _, _, err := client.Issues.CreateComment(ctx, repoOwner, repoName, issueNumber, &comment); err != nil {
 		logrus.WithError(err).Error("Failed to create issue comment")
 	}
 
 	comment = github.IssueComment{
-		Body: String(fmt.Sprintf(`
-		## Step 1: Assign yourself
+		Body: String(fmt.Sprintf(`## Step 1: Assign yourself
 
-		Unassigned issues don't have owners to look after them. 
+Unassigned issues don't have owners to look after them. 
 
-		### :keyboard: Activity
+### :keyboard: Activity
+
+1. On the right side of the screen, under the "Assignees" section, click the gear icon and select yourself
 		
-		1. On the right side of the screen, under the "Assignees" section, click the gear icon and select yourself
-				
-		<hr>
-		<h3 align="center">I'll respond when I detect you've assigned yourself to this issue.</h3>
-		
-		> If you perform an expected action and don't see a response from me, wait a few seconds and refresh the page for your next steps._	
-		`)),
+<hr>
+<h3 align="center">I'll respond when I detect you've assigned yourself to this issue.</h3>
+
+> If you perform an expected action and don't see a response from me, wait a few seconds and refresh the page for your next steps._`)),
 	}
 	if _, _, err := client.Issues.CreateComment(ctx, repoOwner, repoName, issueNumber, &comment); err != nil {
 		logrus.WithError(err).Error("Failed to create issue comment 2")
