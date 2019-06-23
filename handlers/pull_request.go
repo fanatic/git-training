@@ -44,6 +44,11 @@ func (h *PullRequestHandler) Handle(ctx context.Context, eventType, deliveryID s
 			return errors.Wrap(err, "failed to parse pr")
 		}
 		break
+	case "merged":
+		if err := h.merged(ctx, event); err != nil {
+			return errors.Wrap(err, "failed to parse pr")
+		}
+		break
 	}
 
 	return nil
@@ -200,6 +205,49 @@ You successfully created a pull request, and it has passed all of the tests.
 	}
 	if _, _, err := client.PullRequests.CreateReview(ctx, repoOwner, repoName, prNumber, &review); err != nil {
 		logrus.WithError(err).Error("Failed to create pr review")
+	}
+
+	return nil
+}
+
+func (h *PullRequestHandler) merged(ctx context.Context, event github.PullRequestEvent) error {
+	installationID := githubapp.GetInstallationIDFromEvent(&event)
+	client, err := h.NewInstallationClient(installationID)
+	if err != nil {
+		return err
+	}
+
+	repo := event.GetRepo()
+	repoOwner := repo.GetOwner().GetLogin()
+	repoName := repo.GetName()
+	author := event.GetSender()
+
+	issueNumber, err := FindIssueNumberByAssignee(ctx, client, repoOwner, repoName, author.GetLogin())
+	if err != nil {
+		return err
+	} else if issueNumber == 0 {
+		return nil
+	}
+
+	comment := github.IssueComment{
+		Body: String(fmt.Sprintf(`## Nice work
+		
+		Congratulations @%s, you've completed this course!
+		
+		## What did you learn?
+		
+		Here's a recap of all the tasks you've accomplished in your repository:
+		
+		- You learned about issues, pull requests, and the structure of a GitHub repository
+		- You learned about branching
+		- You created a commit
+		- You viewed and responded to pull request reviews
+		- You edited an existing file
+		- You made your first contribution! :tada:  
+		`, author.GetLogin())),
+	}
+	if _, _, err := client.Issues.CreateComment(ctx, repoOwner, repoName, event.GetPullRequest().GetNumber(), &comment); err != nil {
+		logrus.WithError(err).Error("Failed to create pr comment")
 	}
 
 	return nil
