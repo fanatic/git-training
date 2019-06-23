@@ -1,8 +1,18 @@
 # Git Training
 
+This repository will be used for your GitHub/Git training. I will be using Issue and Pull Request comments to communicate with you.
+
+Please create a new issue to get started! Maybe title it "Hello, my name is Susan!" (unless your name is actually Suan, replace it with your name).
+
+![issue tab](https://lab.github.com/public/images/issue_tab.png)
+
+I'll meet you over there, can't wait to get started!
+
+## Developing
+
 This is a GitHub App that you apply to a training repo, and it interacts with trainees through the process of using Issues, PRs, creating files, branches, and resolving.
 
-# Process
+#### Process
 
 Master branch is protected & no PR without 1 approving review
 
