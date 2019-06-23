@@ -2,6 +2,8 @@ package main
 
 import (
 	"net/http"
+	"os"
+	"strconv"
 
 	"github.com/ctrlaltdel121/configor"
 	"github.com/gregjones/httpcache"
@@ -20,10 +22,15 @@ type Config struct {
 }
 
 func main() {
-	var cfg *Config
-	if err := configor.Load(&cfg, "./config.yml"); err != nil {
+	var cfg Config
+	if err := configor.Load(&cfg, "config.yml"); err != nil {
 		logrus.Fatalf("Error loading config: %s\n", err)
 	}
+
+	cfg.Github.App.IntegrationID, _ = strconv.Atoi(os.Getenv("INTEGRATION_ID"))
+	cfg.Github.OAuth.ClientID = os.Getenv("GITHUB_CLIENT_ID")
+	cfg.Github.OAuth.ClientSecret = os.Getenv("GITHUB_CLIENT_SECRET")
+	cfg.Github.App.PrivateKey = os.Getenv("GITHUB_PRIVATE_KEY")
 
 	cc, err := githubapp.NewDefaultCachingClientCreator(
 		cfg.Github,
@@ -40,7 +47,7 @@ func main() {
 
 	webhookHandler := githubapp.NewDefaultEventDispatcher(cfg.Github, handler)
 
-	if err := http.ListenAndServe(":3000", webhookHandler); err != nil {
+	if err := http.ListenAndServe(":"+os.Getenv("PORT"), webhookHandler); err != nil {
 		logrus.Fatalf("Error creating client creator: %s\n", err)
 	}
 }
