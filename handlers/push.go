@@ -52,18 +52,12 @@ func (h *PushHandler) commitCreated(ctx context.Context, event github.PushEvent)
 	author := event.GetSender()
 	branchName := event.GetRef()
 
-	issues, _, err := client.Issues.ListByRepo(ctx, repoOwner, repoName, &github.IssueListByRepoOptions{
-		Assignee: author.GetLogin(),
-	})
+	issueNumber, err := FindIssueNumberByAssignee(ctx, client, repoOwner, repoName, author.GetLogin())
 	if err != nil {
 		return err
-	}
-
-	if len(issues) == 0 {
-		logrus.Infof("Dropping created event because no issues in repo assigned to %s", author.GetLogin())
+	} else if issueNumber == 0 {
 		return nil
 	}
-	issueNumber := issues[0].GetNumber()
 
 	expectedFilename := "users/" + author.GetLogin() + ".md"
 
@@ -82,6 +76,8 @@ I'm looking for a new file named "users/%s.md" in your branch %s.`, author.GetLo
 		if _, _, err := client.Issues.CreateComment(ctx, repoOwner, repoName, issueNumber, &comment); err != nil {
 			logrus.WithError(err).Error("Failed to create issue comment")
 		}
+
+		return nil
 	}
 
 	comment := github.IssueComment{

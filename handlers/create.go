@@ -52,18 +52,12 @@ func (h *CreateHandler) branchCreated(ctx context.Context, event github.CreateEv
 	author := event.GetSender()
 	branchName := event.GetRef()
 
-	issues, _, err := client.Issues.ListByRepo(ctx, repoOwner, repoName, &github.IssueListByRepoOptions{
-		Assignee: author.GetLogin(),
-	})
+	issueNumber, err := FindIssueNumberByAssignee(ctx, client, repoOwner, repoName, author.GetLogin())
 	if err != nil {
 		return err
-	}
-
-	if len(issues) == 0 {
-		logrus.Infof("Dropping created event because no issues in repo assigned to %s", author.GetLogin())
+	} else if issueNumber == 0 {
 		return nil
 	}
-	issueNumber := issues[0].GetNumber()
 
 	comment := github.IssueComment{
 		Body: String(fmt.Sprintf(`## Step 3: Commit a file
