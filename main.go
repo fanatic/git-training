@@ -9,6 +9,8 @@ import (
 	"github.com/gregjones/httpcache"
 	"github.com/palantir/go-baseapp/baseapp"
 	"github.com/palantir/go-githubapp/githubapp"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/hlog"
 	"github.com/sirupsen/logrus"
 )
 
@@ -47,7 +49,10 @@ func main() {
 
 	webhookHandler := githubapp.NewDefaultEventDispatcher(cfg.Github, handler)
 
-	if err := http.ListenAndServe(":"+os.Getenv("PORT"), webhookHandler); err != nil {
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+	loggingHandler := hlog.NewHandler(logger)(webhookHandler)
+
+	if err := http.ListenAndServe(":"+os.Getenv("PORT"), loggingHandler); err != nil {
 		logrus.Fatalf("Error creating client creator: %s\n", err)
 	}
 }
