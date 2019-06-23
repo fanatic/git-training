@@ -32,7 +32,7 @@ func (h *PushHandler) Handle(ctx context.Context, eventType, deliveryID string, 
 		logrus.Infof("Dropping push event because it was a create or delete")
 		return nil
 	}
-	if event.GetRef() == "master" {
+	if event.GetRef() == "refs/heads/master" {
 		logrus.Infof("Dropping push event because it was for master")
 		return nil
 	}

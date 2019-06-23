@@ -44,7 +44,7 @@ func (h *PullRequestHandler) Handle(ctx context.Context, eventType, deliveryID s
 			return errors.Wrap(err, "failed to parse pr")
 		}
 		break
-	case "merged":
+	case "closed":
 		if err := h.merged(ctx, event); err != nil {
 			return errors.Wrap(err, "failed to parse pr")
 		}
@@ -201,7 +201,7 @@ You successfully created a pull request, and it has passed all of the tests.
 1. Once your branch has been merged, you don't need it anymore. Click **Delete branch**.
 
 <hr>
-<h3 align="center">I'll respond when this pull request is merged.</h3>`, author)),
+<h3 align="center">I'll respond when this pull request is merged.</h3>`, author.GetLogin())),
 	}
 	if _, _, err := client.PullRequests.CreateReview(ctx, repoOwner, repoName, prNumber, &review); err != nil {
 		logrus.WithError(err).Error("Failed to create pr review")
