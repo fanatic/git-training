@@ -42,6 +42,7 @@ func main() {
 	webhookHandler := githubapp.NewDefaultEventDispatcher(
 		cfg.Github,
 		&handlers.IssuesHandler{ClientCreator: cc},
+		&handlers.CreateHandler{ClientCreator: cc},
 	)
 
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
