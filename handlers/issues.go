@@ -32,11 +32,13 @@ func (h *IssuesHandler) Handle(ctx context.Context, eventType, deliveryID string
 		if err := h.opened(ctx, event); err != nil {
 			return errors.Wrap(err, "failed to parse issue open")
 		}
+		break
 	case "assigned":
 		logrus.Infof("Handling %s", event.GetAction())
 		if err := h.assigned(ctx, event); err != nil {
 			return errors.Wrap(err, "failed to parse issue open")
 		}
+		break
 	default:
 		logrus.Infof("Handling %s", event.GetAction())
 	}

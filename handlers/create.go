@@ -32,6 +32,7 @@ func (h *CreateHandler) Handle(ctx context.Context, eventType, deliveryID string
 		if err := h.branchCreated(ctx, event); err != nil {
 			return errors.Wrap(err, "failed to parse create")
 		}
+		break
 	default:
 		logrus.Infof("Handling %s", event.GetRefType())
 	}
@@ -52,21 +53,15 @@ func (h *CreateHandler) branchCreated(ctx context.Context, event github.CreateEv
 	author := event.GetSender()
 	branchName := event.GetRef()
 
-	issues, _, err := client.Issues.ListByRepo(ctx, repoOwner, repoName, &github.IssueListByRepoOptions{
-		Assignee: author.GetLogin(),
-	})
+	issueNumber, err := FindIssueNumberByAssignee(ctx, client, repoOwner, repoName, author.GetLogin())
 	if err != nil {
 		return err
-	}
-
-	if len(issues) == 0 {
-		logrus.Infof("Dropping created event because no issues in repo assigned to %s", author.GetLogin())
+	} else if issueNumber == 0 {
 		return nil
 	}
-	issueNumber := issues[0].GetNumber()
 
 	comment := github.IssueComment{
-		Body: String(fmt.Sprintf(`## Step 5: Commit a file
+		Body: String(fmt.Sprintf(`## Step 3: Commit a file
 
 :tada: You created a branch!
 
@@ -82,9 +77,9 @@ Commits are snapshots of file changes, so let's make our first one.
 			- Click **Create new file**
 			- In the "file name" field, type "users/%s.md". Entering the "/" in the filename will automatically place your file in the "users" directory.
 1. When you’re done naming the file, add the following content to your file:
-			`+"```yaml\n"+
-			"Hello, world!\n"+
-			"```"+`
+      `+"```yaml\n"+
+			"      Hello, world!\n"+
+			"      ```"+`
 1. After adding the text, you can commit the change by entering a commit message in the text-entry field below the file edit view.
 1. When you’ve entered a commit message, click **Commit new file**
 
