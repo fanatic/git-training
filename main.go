@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/ctrlaltdel121/configor"
+	"github.com/fanatic/git-training/handlers"
 	"github.com/gregjones/httpcache"
 	"github.com/palantir/go-baseapp/baseapp"
 	"github.com/palantir/go-githubapp/githubapp"
@@ -30,6 +31,7 @@ func main() {
 	}
 
 	cfg.Github.App.IntegrationID, _ = strconv.Atoi(os.Getenv("INTEGRATION_ID"))
+	cfg.Github.App.WebhookSecret = os.Getenv("WEBHOOK_SECRET")
 	cfg.Github.OAuth.ClientID = os.Getenv("GITHUB_CLIENT_ID")
 	cfg.Github.OAuth.ClientSecret = os.Getenv("GITHUB_CLIENT_SECRET")
 	cfg.Github.App.PrivateKey = os.Getenv("GITHUB_PRIVATE_KEY")
@@ -43,11 +45,10 @@ func main() {
 		logrus.Fatalf("Error creating client creator: %s\n", err)
 	}
 
-	handler := &Handler{
-		ClientCreator: cc,
-	}
-
-	webhookHandler := githubapp.NewDefaultEventDispatcher(cfg.Github, handler)
+	webhookHandler := githubapp.NewDefaultEventDispatcher(
+		cfg.Github,
+		&handlers.IssuesHandler{ClientCreator: cc},
+	)
 
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
 	loggingHandler := hlog.NewHandler(logger)(webhookHandler)
