@@ -12,7 +12,7 @@ require (
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79
 	github.com/hashicorp/golang-lru v0.5.1 // indirect
 	github.com/jinzhu/configor v1.1.0 // indirect
-	github.com/palantir/go-baseapp v0.0.0-20190430095958-24408a192334
+	github.com/palantir/go-baseapp v0.0.0-20190430095958-24408a192334 // indirect
 	github.com/palantir/go-githubapp v0.0.0-20190620114758-91e10a96cd34
 	github.com/pkg/errors v0.8.1
 	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a // indirect
