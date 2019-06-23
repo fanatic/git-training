@@ -77,7 +77,7 @@ This is an issue <sup>[:book:](https://help.github.com/articles/github-glossary/
 
 Unassigned issues don't have owners to look after them. 
 
-### :keyboard: Activity
+### :keyboard: Action Requested
 
 1. On the right side of the screen, under the "Assignees" section, click the gear icon and select yourself
 		
@@ -146,9 +146,9 @@ Let’s complete the first step of the GitHub flow: creating a branch <sup>[:boo
 
 Day to day, it's more likely that you'll be creating your branch on the command line, but to keep training simple, let's create it in the web UI.
 
-### :keyboard: Activity: Your first branch
+### :keyboard: Action Requested: Your first branch
 
-1. Navigate to the [Code tab](https://github.factset.com/%s/%s)
+1. Navigate to the [Code tab](https://github.com/%s/%s)
 2. Click **Branch: master** in the drop-down
 3. In the field, enter a name for your branch, like "feat/%s-1"
 4. Click **Create branch: <name>** or press the “Enter” key to create your branch

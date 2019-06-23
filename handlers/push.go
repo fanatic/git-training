@@ -63,26 +63,29 @@ func (h *PushHandler) commitCreated(ctx context.Context, event github.PushEvent)
 		return nil
 	}
 
-	expectedFilename := "users/" + author.GetLogin() + ".md"
+	// Hard to correct the user in the first case - we expect them to edit the branch later in the PR, and this incorrectly fires
 
-	hasExpectedFile := false
-	for _, filename := range event.GetHeadCommit().Added {
-		if filename == expectedFilename {
-			hasExpectedFile = true
-		}
-	}
-	if !hasExpectedFile {
-		comment := github.IssueComment{
-			Body: String(fmt.Sprintf(`## Something's not quite right.
+	// expectedFilename := "users/" + author.GetLogin() + ".md"
 
-I'm looking for a new file named "users/%s.md" in your branch %s.`, author.GetLogin(), branchName)),
-		}
-		if _, _, err := client.Issues.CreateComment(ctx, repoOwner, repoName, issueNumber, &comment); err != nil {
-			logrus.WithError(err).Error("Failed to create issue comment")
-		}
+	// hasExpectedFile := false
+	// for _, filename := range event.GetHeadCommit().Added {
+	// 	if filename == expectedFilename {
+	// 		hasExpectedFile = true
+	// 	}
+	// }
 
-		return nil
-	}
+	// 	if !hasExpectedFile {
+	// 		comment := github.IssueComment{
+	// 			Body: String(fmt.Sprintf(`## Something's not quite right.
+
+	// I'm looking for a new file named "users/%s.md" in your branch %s.`, author.GetLogin(), branchName)),
+	// 		}
+	// 		if _, _, err := client.Issues.CreateComment(ctx, repoOwner, repoName, issueNumber, &comment); err != nil {
+	// 			logrus.WithError(err).Error("Failed to create issue comment")
+	// 		}
+
+	// 		return nil
+	// 	}
 
 	comment := github.IssueComment{
 		Body: String(fmt.Sprintf(`## Step 4: Open a pull request
@@ -93,7 +96,7 @@ In the real world, that commit would contain code working towards some feature o
 
 Now that you’ve created a commit, it’s time to share your proposed change through a pull request! Where issues encourage discussion with other contributors and collaborators on a project, pull requests help you share your changes, receive feedback on them, and iterate on them until they’re perfect!
 
-### :keyboard: Activity: Create a pull request
+### :keyboard: Action Requested: Create a pull request
 
 1. Open a pull request:
 		- From the "Pull requests" tab, click **New pull request**

@@ -2,7 +2,7 @@
 
 This repository will be used for your GitHub/Git training. I will be using Issue and Pull Request comments to communicate with you.
 
-Please create a new issue to get started! Maybe title it "Hello, my name is Susan!" (unless your name is actually Suan, replace it with your name).
+Please **create a new issue** to get started! Click the **Issue** tab, then the green button **New Issue**. Maybe title it "Hello, my name is Susan!" (unless your name is actually Susan, replace it with your name).
 
 ![issue tab](https://lab.github.com/public/images/issue_tab.png)
 

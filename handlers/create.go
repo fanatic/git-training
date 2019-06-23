@@ -65,11 +65,11 @@ func (h *CreateHandler) branchCreated(ctx context.Context, event github.CreateEv
 
 :tada: You created a branch!
 
-Creating a branch allows you to make modifications to your project without changing the deployed "master" branch. Now that you have a branch, it’s time to create a file and make your first commit!
+Creating a branch allows you to make modifications to your project without changing the deployed "master" branch. 
 
-Commits are snapshots of file changes, so let's make our first one.
+Now that you have a branch, it’s time to create a file and make your first commit!  Commits are snapshots of file changes.
 
-### :keyboard: Activity: Your first commit
+### :keyboard: Action Requested: Your first commit
 
 1. Create a new file on this branch named with your username.
 			- Return to the "Code" tab
